@@ -1,0 +1,22 @@
+{
+    "name": "alexkratky/apix",
+    "description": "Class to work with API rate limits.",
+    "keywords": ["php", "api", "rate", "limits", "endpoint"],
+    "homepage": "https://panx.eu/",
+    "license": ["MIT"],
+    "authors": [{
+            "name": "Alex Kratky",
+            "homepage": "https://alexkratky.com"
+        }
+    ],
+    "require": {
+        "php": ">=7.0",
+        "alexkratky/url": "^0.2.0",
+        "alexkratky/routex": "^0.2.0",
+        "alexkratky/cachex": "^0.1.0",
+        "alexkratky/requestx": "^0.1.0"
+    },
+    "autoload": {
+        "files": ["src/API.php", "src/APIModel.php"]
+    }
+}
