@@ -18,10 +18,11 @@ use AlexKratky\Route;
 use AlexKratky\URL;
 use AlexKratky\Cache;
 use AlexKratky\APIModel;
+use AlexKratky\API_Interface;
 use AlexKratky\Request;
+use AlexKratky\PanxUtils;
 
-class API
-{
+class API implements API_Interface {
     /**
      * @var string $endpoint The endpoint name in URI (e.g. v1)
      */
@@ -43,10 +44,9 @@ class API
      * Creates a new API endpoint. Prevent from running in terminal.
      * @param string $endpoint The endpoint name in URI (e.g. v1)
      */
-    public function __construct(string $endpoint)
-    {
+    public function __construct(string $endpoint) {
         //if ran from terminal, prevent to all aciton
-        if (!empty($_SERVER["REQUEST_URI"])) {
+        if(!empty($_SERVER["REQUEST_URI"])) {
             $this->endpoint = $endpoint;
             $this->request = new Request();
             $this->apiModel = new APIModel();
@@ -58,20 +58,19 @@ class API
      * @param URL $URL The requested URL (Used in cache).
      * @return bool Returns true if the request is valid, false otherwise.
      */
-    public function request(URL $URL): bool
-    {
-        if ($this->validate()) {
+    public function request(URL $URL): bool {
+        if($this->validate()) {
             $this->updateRate();
             $x = Route::searchWithNoLimits();
             if (is_callable($x)) {
-                $cachedData = $this->getFromCache($URL->getString());
-                if ($cachedData !== false && $cachedData !== null) {
-                    echo json(json_encode($cachedData));
+                $cachedData = $this->getFromCache($URL->getString()); 
+                if($cachedData !== false && $cachedData !== null) {
+                    echo PanxUtils::json(json_encode($cachedData));
                     exit();
                 }
                 $result = $x();
-                if ($result !== null) {
-                    echo json(json_encode($result));
+                if($result !== null) {
+                    echo PanxUtils::json(json_encode($result));
                     $this->cacheResult($result, $URL->getString());
                 }
                 exit();
@@ -87,26 +86,24 @@ class API
      * @param string $msg The error message.
      * @return string JSON string containing: (bool) 'success' => false; (string) 'error' => $msg
      */
-    public function error(string $msg = "Ivalid request. Check your API key and your rate limits."): string
-    {
-        return json_encode(
+    public function error(string $msg = "Ivalid request. Check your API key and your rate limits."): string {
+        return PanxUtils::json(json_encode(
             array(
                 "success" => false,
-                "error" => $msg,
+                "error" => $msg
             )
-        );
+        ));
     }
 
     /**
      * Validates API_KEY from $_POST["API_KEY"].
-     * @return bool Returns true if the key is valid, false otherwise. If no key provided, execute and print json($this->error("No API_KEY provided."))
+     * @return bool Returns true if the key is valid, false otherwise. If no key provided, execute and print PanxUtils::json($this->error("No API_KEY provided.")) 
      */
-    public function validate(): bool
-    {
-        if ($this->request->getPost('API_KEY') !== null) {
+    public function validate(): bool {
+        if($this->request->getPost('API_KEY') !== null) {
             return $this->apiModel->validate($this->request->getPost('API_KEY'));
         } else {
-            echo json($this->error("No API_KEY provided."));
+            echo PanxUtils::json($this->error("No API_KEY provided."));
             exit();
         }
     }
@@ -116,8 +113,7 @@ class API
      * @param mixed $result The data to be saved.
      * @param string $URL_STRING The URL string.
      */
-    public function cacheResult($result, string $URL_STRING)
-    {
+    public function cacheResult($result, string $URL_STRING) {
         Cache::save($this->request->getPost('API_KEY') . str_replace('/', '_', $URL_STRING), $result);
     }
 
@@ -126,16 +122,15 @@ class API
      * @param string $URL_STRING The URL String of cached result.
      * @return mixed Returns false if no cache false, otherwise returns the result.
      */
-    public function getFromCache(string $URL_STRING)
-    {
+    public function getFromCache(string $URL_STRING) {
         return Cache::get($this->request->getPost('API_KEY') . str_replace('/', '_', $URL_STRING), self::CACHE_TIME);
     }
 
     /**
      * Increses the Rate limit of API Key.
      */
-    public function updateRate()
-    {
+    public function updateRate() {
         $this->apiModel->updateRate($this->request->getPost('API_KEY'));
     }
+
 }
