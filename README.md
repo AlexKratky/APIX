@@ -1,6 +1,6 @@
-# API
+# APIX
 
-Class to work with API rate limits
+Class to work with API rate limits.
 
 ### Installation
 

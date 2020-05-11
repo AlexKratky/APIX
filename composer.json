@@ -11,11 +11,11 @@
     ],
     "require": {
         "php": ">=7.0",
-        "alexkratky/url": "^0.3.0",
-        "alexkratky/routex": "^0.5.0",
-        "alexkratky/cachex": "^0.2.0",
-        "alexkratky/requestx": "^0.2.0",
-        "alexkratky/panx-utils": "^0.1.0"
+        "alexkratky/url": "^1.0.0",
+        "alexkratky/routex": "^1.0.0",
+        "alexkratky/cachex": "^1.0.0",
+        "alexkratky/requestx": "^1.0.0",
+        "alexkratky/panx-utils": "^1.0.0"
     },
     "autoload": {
         "files": ["src/API_Interface.php", "src/API.php", "src/APIModel.php"]
